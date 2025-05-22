@@ -1,18 +1,5 @@
-/*Призначення:
-Відповідає за створення, оновлення та очищення галереї зображень, а також за інтеграцію лайтбоксу (SimpleLightbox).
+// /*Призначення:
 
-Функції:
-1.createGallery(images):
-  -Приймає масив об'єктів із зображеннями (дані від API).
-  -Створює HTML-розмітку для галереї.
-  -Додає цю розмітку до контейнера .gallery.
-  -Ініціалізує або оновлює SimpleLightbox для роботи з галереєю.
-2.clearGallery():
- -Очищає контейнер галереї.
-3.showLoader():
--Додає клас loading до тега <body>, активуючи стилі лоадера (визначені в CSS).
-4.hideLoader():
-  -Видаляє клас loading із тега <body>.*/
 
 // Імпортую бібліотеку для лайтбоксу
 import SimpleLightbox from 'simplelightbox';
@@ -20,9 +7,11 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 
 // Знаходжу контейнер для галереї
 const galleryContainer = document.querySelector('.gallery'); // Вибираю елемент галереї за класом "gallery"
+
 // знаходжу кнопку для пролістування галереі
 const loadMoreButton = document.querySelector('.select');
 
+// знаходжу індікатор завантаження
 const loader = document.querySelector('.loader');
 
 // перевірка елемента галереї
@@ -105,11 +94,13 @@ export function createGallery(images) {
 export async function clearGallery() {
   try {
     galleryContainer.innerHTML = ''; // видаляю весь HTML-контент с контейнера галереї
+
     // Сховати кнопку під час нового пошуку
-    hideLoadMoreButton();
+   await hideLoadMoreButton();
 
     console.log('Галерея очищена.');
   } catch (error) {
+
     // Обробка помилок під час очищення
     console.error('Помилка у функції clearGallery:', error);
     throw new Error('Не вдалося очистити галерею.');
@@ -120,8 +111,9 @@ export async function clearGallery() {
 
 export async function showLoader() {
   // console.log('Виклик функції showLoader.'); //  виклику функції
+
   try {
-    // document.body.classList.add('loading'); // присвоюю тегу <body>  клас "loading" який вмикає анимацію через
+    //
     loader.style.display = 'block';
 
     console.log('Клас "loading" додано до тега <body>.'); // підтвердження додавання класу після невірного вводу
@@ -163,3 +155,11 @@ export async function hideLoadMoreButton() {
     throw error;
   }
 }
+
+
+
+
+
+
+
+

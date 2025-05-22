@@ -191,16 +191,20 @@ input::placeholder {
 
 
 .loader {
-
   width: 48px;
-  height: 48px;
-  border: 5px solid #FFF;
-  border-bottom-color: #FF3D00;
-  border-radius: 50%;
+    height: 48px;
+    border: 5px solid #FFF;
+    border-bottom-color: #FF3D00;
+    border-radius: 50%;
+    display: none;
+    box-sizing: border-box;
+    animation: rotation 1s linear infinite;
+
+}
+.is-hidden{
   display: none;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
-  margin: 10px auto 0;
+  /* Видимий при активації */
+  margin-top: 10px;
 }
 
 @keyframes rotation {
