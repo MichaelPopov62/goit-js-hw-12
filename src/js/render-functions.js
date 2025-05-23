@@ -1,4 +1,10 @@
-// /*Призначення:
+/*createGallery(images) — формує і додає HTML в .gallery.
+
+clearGallery() — очищає HTML в .gallery.
+
+showLoader() / hideLoader() — керують індикатором завантаження.
+
+showLoadMoreButton() / hideLoadMoreButton() — показують або ховають кнопку завантаження.*/
 
 
 // Імпортую бібліотеку для лайтбоксу

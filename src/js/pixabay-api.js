@@ -1,4 +1,4 @@
-
+/*відповідає за взаємодію з API сервісу Pixabay — тобто робить HTTP-запити, отримує від сервера дані (зображення) за заданим пошуковим запитом і повертає їх у вигляді обробленого результату.*/
 
 // Імпортую бібліотеку для HTTP-запитів
 import axios from 'axios';
@@ -11,7 +11,7 @@ const BASE_URL = 'https://pixabay.com/api/'; // Базова URL-адреса д
 const PER_PAGE = 15;
 
 // Функція для отримання зображень за пошуковим запитом
-export async function getImagesByQuery(query) {
+export async function getImagesByQuery(query, page = 1) {
   // перевірка отриманого параметра функції
   // console.log('Виклик функції getImagesByQuery із запитом:', query);
 
@@ -23,15 +23,19 @@ export async function getImagesByQuery(query) {
     orientation: 'horizontal', // Орієнтація зображень-горізогтальна
     safesearch: true, // Фільтр для безпечного пошуку
     per_page: 15, // Максимальна кількість результатів за запитом
-    page: 1,
+    page: page,
   };
 
   //тут я прописую обробку помилки яка може виникнути під час запиту.Відбувається виклик axios.get  
   try {
     // Виконую GET-запит до API з використанням axios
     const response = await axios.get(BASE_URL, { params });
+
+  
+
     // Повертаю дані (масив зображень hits)
     return response.data;
+
   } catch (error) {
     // Якщо сталася помилка, викидаю її для обробки на рівні виклику функції
     throw error;
