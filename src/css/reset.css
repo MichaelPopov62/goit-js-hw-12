@@ -158,20 +158,28 @@ input::placeholder {
   gap: 16px;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
   justify-content: center;
-  justify-content: center;
+  width: 1440px;
+    
 }
 
 /* Елемент галереї */
 .gallery-item {
-  flex: 0 0 calc((100% - 64px) / 5);
-  max-width: calc((100% - 64px) / 5);
+  flex: 0 0 calc((100% - 32px) / 3);
+  max-width: 360px;
+    /* Фіксована ширина для елементів */
+    height: 200px;
+    /* Фіксована висота */
   border: 2px solid #e0e0e0;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   background-color: #fff;
+  
+  height: 250px;
+    /* фіксована висота для кращої сітки */
+   
 }
 
 /* Зображення в галереї */
