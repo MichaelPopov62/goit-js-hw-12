@@ -15,7 +15,7 @@
  */
 
 
-// //імпортую функціі і бібліотеку
+// //імпортую функціі.Тут функція робить HTTP-запит і повертає JSON-об'єкт з зображеннями
 import { getImagesByQuery } from './js/pixabay-api.js';
 /*перевірка на роботу скріпта
 console.log('Скрипт main.js працює');
@@ -24,16 +24,17 @@ getImagesByQuery('test').then(data => {
   console.log('Отримано дані з Pixabay:', data);
 });*/
 
+// функціі для роботи з DOM
 import {
-  createGallery,
-  clearGallery,
-  showLoadMoreButton,
-  hideLoadMoreButton,
-} from './js/render-functions.js';  //функціі для візуального оновленя DOM
+  createGallery,          // додає розмітку HTML для зображень
+  clearGallery,          // очищає галерею
+  showLoadMoreButton,   // виводять кнопку "Load more"
+  hideLoadMoreButton,  //ховають кнопку"Load more"
+} from './js/render-functions.js';  
 import iziToast from 'izitoast';    // бібліотека для яскравих повідомлень користувачу
 import 'izitoast/dist/css/iziToast.min.css';  // стилі для iziToast
 
-//шукаю елементи, отримую DOM
+// шукаю елементи, отримую DOM
 const form = document.querySelector('.form');                  //форма пошуку
 const input = form.querySelector('input[name="search-text"]');//поле виведення пошукового текста
 const loader = document.querySelector('.loader');            // індікатор завантаження
@@ -68,13 +69,12 @@ async function delay(ms) {
  isFirstLoad = true - перший запит (початковий пошук),
 false - запит при натисканні Load More. Тобто для блокування повторного виклику*/
 async function loadImages(isFirstLoad = false) {
+  /* Захист від повторного виклику, якщо запит уже в процесі.Якщо запит уже виконується — не запускаю новий (захист від спаму або "подвійного кліку").*/
   if (isLoading) {
     console.log('Запит уже виконується, новий запит не запускається.');
     return;
   }
-
   isLoading = true;
-  console.log('Початок завантаження зображень.'); // Лог на початок завантаження
 
   showLoader(); // показую індікатор що данні завантажені
   hideLoadMoreButton(); // ховаю кнопку поки не знаю, чи є ще сторінки
@@ -82,48 +82,43 @@ async function loadImages(isFirstLoad = false) {
   try {
     await delay(2000); // штучна затримка виконання коду ( для тесту )функціі loadImages
 
-    // роблю запит до Pixabay за поточним запитом і сторінкою
+    /* роблю запит до Pixabay за поточним запитом і сторінкою.І отримую список зображеня з сервера.Це основна функція, вона робить всє роботу*/
     const data = await getImagesByQuery(currentQuery, currentPage);
 
-    // Якщо немає результатів — очищаємо галерею і повідомляємо користувача
-    if (!data.hits || data.hits.length === 0) {
+    //Перевірка чи отримали валідну відповідь
+    if (!data || !Array.isArray(data.hits)) {
+      throw new Error('Невалідна структура відповіді API');
+    }
+    // Якщо немає результатів — очищаємо попередню галерею і повідомляю користувача
+    if (data.hits.length === 0) {
       clearGallery(); // очищаю галерею
-      iziToast.info({ //Виводжу повідомлення
+      iziToast.info({
+        //Виводжу повідомлення
         title: 'Нічого не знайдено',
         message:
           'Sorry, there are no images matching your search query. Please try again!',
         position: 'topRight',
       });
-      hideLoadMoreButton(); //ховаю кнопку 
-      hideLoader();        //ховаю індікатор завантаження
-      // console.log('Завершення завантаження: результатів немає.');
-      isLoading = false;
-      return; // припиняю виконання, бо нема що показувати
+      return;
     }
 
-    // Якщо це перший запит, очищую старі результати та оновлюю загальну кількість
+    // Якщо це новий запит, очищую старі результати та оновлюю загальну кількість
     if (isFirstLoad) {
       clearGallery(); // видаляю старі данні(зображення)
       totalHits = data.totalHits; // оновлюю загальну кількість знайдених зображень
-
-      // Обчислюємо максимальну кількість сторінок (по 15 зображень на сторінку)
-      const maxPages = Math.ceil(totalHits / 15);
-
-      // console.log(`Новий запит: "${currentQuery}"`);// показую скільки сторінок
-      
-      // Повідомлення користувачу, що пошук успішний
+      // показую повідомлення про успішний пошук
       iziToast.success({
         title: 'Успіх',
         message: `Знайдено ${totalHits} зображень.`,
         position: 'topRight',
-        timeout: 2000,
       });
     }
+    createGallery(data.hits); // створюю HTML додаю зображення до галереі
 
     // Створюю в DOM елементи для отриманих зображень і додаємо їх до галереї
     createGallery(data.hits);
 
-    //додаю скрол.Зручно бачити що новий контент додано 
+    //додаю скрол.Зручно бачити що новий контент додано
     if (isFirstLoad) {
       // При першому завантаженні скролю сторінку вверх, щоб бачити початок галереї
       window.scrollTo({
@@ -139,7 +134,7 @@ async function loadImages(isFirstLoad = false) {
         const cardHeight = firstCard.getBoundingClientRect().height || 200; // Висота картки (default 200)
         const galleryHeight = gallery.scrollHeight;
 
-        // Прокрутка відбувається тільки якщо галерея більша за висоту вікна браузера
+        // Прокрутка відбувається.На Load More: прокручуємо вниз на висоту однієї картки * 2, щоб користувач побачив нові зображення.
         if (galleryHeight > window.innerHeight) {
           window.scrollBy({
             top: cardHeight * 2,
@@ -149,35 +144,34 @@ async function loadImages(isFirstLoad = false) {
       }
     }
 
-    // Перевіряю, чи є ще сторінки для завантаження
-    const maxPages = Math.ceil(totalHits / 15);
-    console.log(`Поточна сторінка: ${currentPage} / ${maxPages}`);
 
-    if (currentPage >= maxPages) {
-      // Якщо це остання сторінка — виводжу повідомлення
+    // Обчислюємо максимальну кількість сторінок (по 15 зображень на сторінку)
+    const maxPages = Math.ceil(totalHits / 15);
+
+    // console.log(`Новий запит: "${currentQuery}"`);// показую скільки сторінок
+    if (currentPage < maxPages) {
+      currentPage += 1; // переход на іншу сторінку
+      showLoadMoreButton(); // пріказую кнопку
+    } else {
+      hideLoadMoreButton(); // Остання сторінка — ховаємо кнопку
+      //  Якщо ще є зображення — показую кнопку Load More. Якщо ні — ховаю кнопку, інформую користувача.
       iziToast.info({
         title: 'Кінець колекції',
         message: "We're sorry, but you've reached the end of search results.",
         position: 'topRight',
       });
-      hideLoadMoreButton(); //ховаю кнопку
-    } else {
-
-      // Якщо сторінки залишились — збільшую currentPage
-      currentPage += 1;
-      showLoadMoreButton();// показую кнопку для наступноі сторінки
     }
-    //завершеня функціі
   } catch (error) {
     // Якщо сталася помилка при запиті — показую повідомлення і лог в консоль
     console.error('Помилка запиту:', error);
-    iziToast.error({  //повідомлення про помилку
+    iziToast.error({
+      //повідомлення про помилку
       title: 'Помилка',
       message: 'Не вдалося завантажити зображення. Спробуйте пізніше.',
       position: 'topRight',
     });
   } finally {
-    // В будь-якому випадку 
+    // В будь-якому випадку
     hideLoader(); //ховаю індикатор
     isLoading = false; // скидаю прапорець завантаження
   }
@@ -215,7 +209,7 @@ form.addEventListener('submit', async event => {
   input.value = '';
 });
 
-// Обробник кліку на кнопку Load More
+// Обробник кліку на кнопку Load More.Коли бажаю побачити ще зображення. Нічого не очищається.Додаються зображення.
 loadMoreButton.addEventListener('click', async () => {
   console.log('Кнопка Load More натиснута');
 

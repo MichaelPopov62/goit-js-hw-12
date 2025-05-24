@@ -102,13 +102,13 @@ export function createGallery(images) {
 }
 
 /* Функція для очищення галереї, приховування кнопки "Loadmore".
-Видаля. весь вміст галереї перед новим запитом. Також ховаю кнопку "Load more", бо вона не потрібна під час нового пошуку.*/
-export async function clearGallery() {
+Видаля. весь вміст галереї перед новим запитом. Також ховаю кнопку "Load more", бо вона не потрібна під час нового пошуку. Немає жодної причини бути async. Вона ні чекає нічого з затримкою*/
+export  function clearGallery() {
   try {
     galleryContainer.innerHTML = ''; // видаляю весь HTML-контент с контейнера галереї
 
     // Сховати кнопку під час нового пошуку
-   await hideLoadMoreButton();
+    hideLoadMoreButton();
 
     console.log('Галерея очищена.');
   } catch (error) {
@@ -119,9 +119,10 @@ export async function clearGallery() {
   }
 }
 
-// Функціі для того щоб під час запиту показую лоадер, після завершення — ховаю.
+/* Функціі для того щоб під час запиту показую лоадер, після завершення — ховаю.
+Вони обидві синхронні бо просто забирають і додають клас лоадера в DOM- операціі*/
 
-export async function showLoader() { //керує коли треба показувати лоадер
+export function showLoader() { //керує коли треба показувати лоадер
   // console.log('Виклик функції showLoader.'); //  виклику функції
 
   try {
@@ -136,7 +137,7 @@ export async function showLoader() { //керує коли треба показ
 }
 
 // Функція для приховування
-export async function hideLoader() {
+export function hideLoader() {
   // console.log('Виклик функції hideLoader.'); //  виклик
   try {
     loader.style.display = 'none'; //Коли завантаження зображень завершено, я використовую цей рядок, щоб сховати спінер , який показує, що щось завантажується. Елемент буде ніби видалений зі сторінки (але фізично залишиться в коді)
@@ -150,7 +151,7 @@ export async function hideLoader() {
 
 /* Кнопка "Load more" зʼявляється лише якщо є що завантажити. Коли починаєтьсчя новий пошук — ховаю її. Після успішного завантаження — показую знову.Для куруванням кнопкою додаю дві функціі*/
 //показую кнопку
-export async function showLoadMoreButton() {
+export function showLoadMoreButton() {
   try {
     loadMoreButton.classList.remove('is-hidden'); //прибираю клас is-hidden який раніше ховав цю кнопку.Виконується тоді коли зображень більш ніж одна сторінка
   } catch (error) {
@@ -159,7 +160,7 @@ export async function showLoadMoreButton() {
   }
 }
 // Приховати кнопку
-export async function hideLoadMoreButton() {
+export function hideLoadMoreButton() {
   try {
     loadMoreButton.classList.add('is-hidden'); //додаю клас is-hidden який раніше був знятий.Виконується тоді коли зображень тільки на одну сторінку
   } catch (error) {
