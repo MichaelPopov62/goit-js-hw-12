@@ -199,21 +199,26 @@ input::placeholder {
 
 
 .loader {
-  width: 48px;
+   width: 48px;
     height: 48px;
     border: 5px solid #FFF;
     border-bottom-color: #FF3D00;
     border-radius: 50%;
     display: none;
     box-sizing: border-box;
-    animation: rotation 1s linear infinite;
-
+    animation: rotation 1s linear infinite; 
+    
 }
-.is-hidden{
+ .is-hidden{
   display: none;
-  /* Видимий при активації */
+  /* Видимий при активації*/ 
   margin-top: 10px;
-}
+} 
+
+/* Коли індикатор активний */
+/* .loader.visible {
+  display: block;
+} */
 
 @keyframes rotation {
   0% {
