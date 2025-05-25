@@ -1,89 +1,86 @@
 
 
-/* Файл відповідає за роботу інтерфейсу галереї.
+ /* Файл відповідає за роботу інтерфейсу галереї.
 
-1.createGallery(images) — формує і додає HTML в .gallery.
-2.clearGallery() — очищає HTML в .gallery.
-3.showLoader() / hideLoader() — керують індикатором завантаження.
-4.showLoadMoreButton() / hideLoadMoreButton() — показують або ховають кнопку завантаження.
+ 1.createGallery(images) — формує і додає HTML в .gallery.
+ 2.clearGallery() — очищає HTML в .gallery.
+ 3.showLoader() / hideLoader() — керують індикатором завантаження.
+ 4.showLoadMoreButton() / hideLoadMoreButton() — показують або ховають кнопку завантаження.
 5. у файлі ініціалізується SimpleLightbox — бібліотека для модального перегляду зображень.
-*/
+ */
 
 
 
 /* Імпорт бібліотеки SimpleLightbox для перегляду зображень у модальному вікні (збільшення за кліком).*/
 
-import SimpleLightbox from 'simplelightbox';
-import 'simplelightbox/dist/simple-lightbox.min.css';
+ import SimpleLightbox from 'simplelightbox';
+ import 'simplelightbox/dist/simple-lightbox.min.css';
 
-// Отримую посилання на DOM-елементи, з якими буде взаємодіяти галерея.
+// Пошук елементів у DOM, які потрібні для роботи галереї
 
-// Знаходжу контейнер для галереї. Щоб надалі працювати з елементами,зберігаю їх у змінних.
+ // Знаходжу контейнер для галереї. Щоб надалі працювати з елементами,зберігаю їх у змінних.
 const galleryContainer = document.querySelector('.gallery'); // Вибираю елемент галереї за класом "gallery"
 
-// знаходжу кнопку для пролістування галереі
-const loadMoreButton = document.querySelector('.select');
+ // знаходжу кнопку для пролістування галереі
+ const loadMoreButton = document.querySelector('.select');
 
-// знаходжу індікатор завантаження
-const loader = document.querySelector('.loader');
+ // знаходжу індікатор завантаження
+ const loader = document.querySelector('.loader');
 
 // перевірка елемента галереї
-// console.log('Контейнер галереї знайдено:', galleryContainer);
+console.log('Контейнер галереї знайдено:', galleryContainer);
 
-let lightbox = null; // Змінна для екземпляра SimpleLightbox.Вона буде містить екземпляр бібліотеки SimpleLightbox, щоб оновлювати або ініціалізувати lightbox після рендера.
+ let lightbox = null; // Змінна для екземпляра SimpleLightbox.Вона буде містить екземпляр бібліотеки SimpleLightbox, щоб оновлювати або ініціалізувати lightbox після рендера.
 // console.log('Ініціалізовано змінну для SimpleLightbox:', lightbox); // перевіряю початкового значення змінної
 
-/* Створює HTML-розмітку для масиву зображень і додає її в контейнер .gallery.
-Також ініціалізує або оновлює SimpleLightbox для нових елементів.
- 1. Перетворюю кожне зображення з масиву на шматок HTML-коду, щоб відобразити його в галереї.
- 2.Усі згенеровані HTML-елементи вставляються всередину контейнера з класом .gallery, тобто на сторінку.
- 3. Якщо модальне вікно для перегляду зображень (lightbox) уже створене — оновлюю його, щоб показував нові фото. Якщо його ще немає — створюю нове.
- 4.Якщо в галереї вже є зображення — показую кнопку "Load more", щоб користувач міг завантажити ще.*/
-export function createGallery(images) {
-  // Перевіряю отриманий масив зображень
+ /* Функція createGallery
+   Приймає масив об'єктів (зображень) і додає їх до галереї.Також налаштовує або оновлює модальне вікно для перегляду зображень.*/
+
+ export function createGallery(images) {
+ // Перевіряю отриманий масив зображень
   console.log('Виклик createGallery. Масив зображень:', images);
 
   try {
-    // Генерую HTML-розмітку для кожного елемента з масиву зображень
-    const markup = images
-      .map(
-        ({
-          webformatURL, // URL для відображення маленького зображення
-          largeImageURL, // URL для великого зображення
-          tags, // Опис зображення
-          likes, // Кількість лайків
-          views, // Кількість переглядів
-          comments, // Кількість коментарів
-          downloads, // Кількість завантажень
-        }) => {
-          //Виводжу  дані, які обробляються.
-          console.log('Обробка зображення:', {
-            webformatURL,
-            largeImageURL,
-            tags,
-          });
-          return `
-        <li class="gallery-item">
-          <a href="${largeImageURL}" class="gallery-link">
-          <img src="${webformatURL}" alt="${tags}" loading="lazy" />
-          </a>
-        <div class="info">
-        <p><b>Likes:</b> ${likes}</p>
-        <p><b>Views:</b> ${views}</p>
-        <p><b>Comments:</b> ${comments}</p>
-        <p><b>Downloads:</b> ${downloads}</p>
-      </div>
-    </li>`;
-        }
-      )
+   // Генерую HTML-розмітку для кожного елемента з масиву зображень
+   const markup = images
+  .map(
+    ({
+      webformatURL, // URL для відображення маленького зображення
+      largeImageURL, // URL для великого зображення
+      tags, // Опис зображення
+      likes, // Кількість лайків
+     views, // Кількість переглядів
+     comments, // Кількість коментарів
+     downloads, // Кількість завантажень
+   }) => {
+     //Виводжу  дані, які обробляються.
+     console.log('Обробка зображення:', {
+       webformatURL,
+       largeImageURL,
+       tags,
+     });
+     return `
+   <li class="gallery-item">
+     <a href="${largeImageURL}" class="gallery-link">
+     <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+     </a>
+   <div class="info">
+    <p><b>Likes:</b> ${likes}</p>
+      <p><b>Views:</b> ${views}</p>
+      <p><b>Comments:</b> ${comments}</p>
+      <p><b>Downloads:</b> ${downloads}</p>
+    </div>
+  </li>`;
+     }
+   )
 
-      //Метод .join('') перетворює масив рядків, отриманих після виконання .map(), в єдиний рядок.
-      .join('');
+    //Метод .join('') перетворює масив рядків, отриманих після виконання .map(), в єдиний рядок.
+   .join('');
 
-    // Додаю згенеровану розмітку в контейнер галереї
-    galleryContainer.insertAdjacentHTML('beforeend', markup);
+  // Додаю згенеровану розмітку в контейнер галереї
+  galleryContainer.insertAdjacentHTML('beforeend', markup);
 
-    // Перевіряю чи вже існує екземпляр SimpleLightbox
+  // Перевіряю чи вже існує екземпляр SimpleLightbox
     if (lightbox) {
       lightbox.refresh(); // Якщо так,оновлюю існуючий екземпляр лайтбоксу для нових елементів
     } else {
@@ -92,90 +89,29 @@ export function createGallery(images) {
         captionsData: 'alt', // Використовую атрибут "alt" для підписів зображення
         captionDelay: 250, // Затримка перед показом підпису
       });
-
-      //перевіряю створення
-      // console.log('Створено новий екземпляр SimpleLightbox:', lightbox);
-
-      // Показуємо кнопку після додавання зображень
-    }
-    // Показати кнопку "Load more" якщо є зображення
-    if (galleryContainer.children.length > 0) {
-      loadMoreButton.classList.remove('is-hidden');
     }
    
   } catch (error) {
-    console.error('Помилка у createGallery:', error);
-    throw error;
+    console.error('Помилка у createGallery:', error);//виводжу помилку в консоль
+    throw error; //// Передаю помилку далі, щоб її можна було обробити
   }
 }
 
-/* Функція для очищення галереї, приховування кнопки "Loadmore".
-Видаля. весь вміст галереї перед новим запитом. Також ховаю кнопку "Load more", бо вона не потрібна під час нового пошуку. Немає жодної причини бути async. Вона ні чекає нічого з затримкою*/
-export  function clearGallery() {
+/*  Функція clearGallery.Видаляє всі зображення з галереї перед новим пошуком. Це дозволяє уникнути дублювання старих результатів.*/
+ 
+ export  function clearGallery() {
   try {
     galleryContainer.innerHTML = ''; // видаляю весь HTML-контент с контейнера галереї
 
-    // Сховати кнопку під час нового пошуку
-    hideLoadMoreButton();
 
-    console.log('Галерея очищена.');
+    console.log('Галерея очищена.'); //  підтвержую очищення
   } catch (error) {
 
-    // Обробка помилок під час очищення
-    console.error('Помилка у функції clearGallery:', error);
-    throw new Error('Не вдалося очистити галерею.');
+   // Обробка помилок під час очищення
+    console.error('Помилка у функції clearGallery:', error); // виводжу при помилке
+     throw new Error('Не вдалося очистити галерею.'); // нова помилка з описом
   }
-}
-
-/* Функціі для того щоб під час запиту показую лоадер, після завершення — ховаю.
-Вони обидві синхронні бо просто забирають і додають клас лоадера в DOM- операціі*/
-
-export function showLoader() { //керує коли треба показувати лоадер
-  // console.log('Виклик функції showLoader.'); //  виклику функції
-
-  try {
-    //
-    loader.style.display = 'block'; /*Тут я показую що індикатор завантаження (loader) на сторінці.Перед тим, як починаєтся завантажуваня зображення з API, я викликаю цю команду, щоб зрозуміти-йде завантаження.Потім коли завантаження завершується я ховаю лоадер іншою функцією*/
-    console.log('Клас "loading" додано до тега <body>.'); // підтвердження додавання класу після невірного вводу
-  } catch (error) {
-    // Обробка помилок під час відображення лоадера
-    console.error('Помилка у функції showLoader:', error);
-    throw new Error('Не вдалося показати лоадер.');
-  }
-}
-
-// Функція для приховування
-export function hideLoader() {
-  // console.log('Виклик функції hideLoader.'); //  виклик
-  try {
-    loader.style.display = 'none'; //Коли завантаження зображень завершено, я використовую цей рядок, щоб сховати спінер , який показує, що щось завантажується. Елемент буде ніби видалений зі сторінки (але фізично залишиться в коді)
-    // console.log('Клас "loading" видалено з тега <body>.'); //  підтвердження видалення класу
-  } catch (error) {
-    // Обробка помилок під час приховування лоадера
-    console.error('Помилка у функції hideLoader:', error);
-    throw new Error('Не вдалося приховати лоадер.');
-  }
-}
-
-/* Кнопка "Load more" зʼявляється лише якщо є що завантажити. Коли починаєтьсчя новий пошук — ховаю її. Після успішного завантаження — показую знову.Для куруванням кнопкою додаю дві функціі*/
-//показую кнопку
-export function showLoadMoreButton() {
-  try {
-    loadMoreButton.classList.remove('is-hidden'); //прибираю клас is-hidden який раніше ховав цю кнопку.Виконується тоді коли зображень більш ніж одна сторінка
-  } catch (error) {
-    console.error('Помилка при показі кнопки Load more:', error);
-    throw error;
-  }
-}
-// Приховати кнопку
-export function hideLoadMoreButton() {
-  try {
-    loadMoreButton.classList.add('is-hidden'); //додаю клас is-hidden який раніше був знятий.Виконується тоді коли зображень тільки на одну сторінку
-  } catch (error) {
-    console.error('Помилка при приховуванні кнопки Load more:', error);
-    throw error;
-  }
-}
+ }
 
 
 
