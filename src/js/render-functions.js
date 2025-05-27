@@ -60,7 +60,7 @@ console.log('Контейнер галереї знайдено:', galleryContai
        tags,
      });
      return `
-   <li class="gallery-item">
+   <li class="photo-card gallery-item">
      <a href="${largeImageURL}" class="gallery-link">
      <img src="${webformatURL}" alt="${tags}" loading="lazy" />
      </a>
@@ -113,8 +113,35 @@ console.log('Контейнер галереї знайдено:', galleryContai
   }
  }
 
+ /*
+  Показує індикатор завантаження (loader).Ця функція керує видимістю .loader через зміну стилів.
+ */
+export function showLoader() {
+  if (loader) loader.style.display = 'block';
+  console.log('Індикатор завантаження показано.');
+}
 
 
+//  Ховає індикатор завантаження (loader).
+ 
+export function hideLoader() {
+  if (loader) loader.style.display = 'none';
+  console.log('Індикатор завантаження сховано.');
+}
+
+// Показує кнопку "Load More".Вона має клас is-hidden, який потрібно видалити.
+
+export function showLoadMoreButton() {
+  if (loadMoreButton) loadMoreButton.classList.remove('is-hidden');
+  console.log('Кнопку "Load More" показано.');
+}
+
+// Ховає кнопку "Load More".
+ 
+export function hideLoadMoreButton() {
+  if (loadMoreButton) loadMoreButton.classList.add('is-hidden');
+  console.log('Кнопку "Load More" сховано.');
+}
 
 
 
